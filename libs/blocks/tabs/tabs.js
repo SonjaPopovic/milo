@@ -39,9 +39,11 @@ function changeTabs(target, rootElem, jumpToSection) {
     let sectionToJump;
     let intervalCounter = 0;
     const intervalID = setInterval(() => {
+      console.log('in set interval');
       intervalCounter++;
       sectionToJump = rootElem.querySelector(`[data-jump-to-tab="${target.getAttribute('id')}"]:not([data-status="decorated"])`);
       if (sectionToJump) {
+        console.log('scroll', sectionToJump);
         sectionToJump.scrollIntoView();
         clearInterval(intervalID);
       }
@@ -96,7 +98,8 @@ function initTabs(elm, config, rootElem) {
     });
   });
   tabs.forEach((tab) => {
-    tab.addEventListener('click', (e) => changeTabs(e.target, rootElem, true));
+    const sectionToJump = rootElem.querySelector(`[data-jump-to-tab="${tab.getAttribute('id')}"]`);
+    tab.addEventListener('click', (e) => changeTabs(e.target, rootElem, sectionToJump));
   });
   if (config) configTabs(config, rootElem);
 }
@@ -215,7 +218,6 @@ const init = (block) => {
     if (assocTabItem && jumpToEl) {
       const section = sectionMetadata.closest('.section');
       section.setAttribute('data-jump-to-tab', tabValue);
-      e.scrollIntoView();
     }
   });
   handleDeferredImages(block);
