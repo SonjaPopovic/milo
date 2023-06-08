@@ -54,10 +54,18 @@ describe('tabs', () => {
     const contentForFirstButton = document.querySelector('[data-jump-to-tab="tab-demo-1"]')
     const yPositionBeforeScroll = contentForFirstButton.getBoundingClientRect().y;
     firstButton.click();
+    const yPositionAfterScroll =  contentForFirstButton.getBoundingClientRect().y;
+    expect(yPositionBeforeScroll).greaterThan(yPositionAfterScroll);
+  });
+  it('simulate slow page load',  async () => {
+    const firstButton = allTabs[5].querySelector('div[role="tablist"] button[aria-controls="tab-panel-demo-slow-1"]');
+    const contentForFirstButton = document.querySelector('[data-jump-to-tab="tab-demo-slow-1"]');
+    const yPositionBeforeScroll = contentForFirstButton.getBoundingClientRect().y;
+    contentForFirstButton.setAttribute('data-status', 'decorated');
+    firstButton.click();
+    contentForFirstButton.removeAttribute('data-status');
     clock.tick(1100);
-    const yPositionAfterScroll =  document.querySelector('[data-jump-to-tab="tab-demo-1"]').getBoundingClientRect().y;
-    console.log('yPositionAfterScroll', yPositionAfterScroll);
-    console.log('yPositionBeforeScroll', yPositionBeforeScroll);
+    const yPositionAfterScroll =  contentForFirstButton.getBoundingClientRect().y;
     expect(yPositionBeforeScroll).greaterThan(yPositionAfterScroll);
   });
 });

@@ -21,7 +21,7 @@ const scrollTabIntoView = (e) => {
   if (!isElInView) e.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 };
 
-function changeTabs(target, rootElem, jumpToSection) {
+function changeTabs(target, rootElem, sectionToJump) {
   const parent = target.parentNode;
   const grandparent = parent.parentNode.nextElementSibling;
   parent
@@ -35,22 +35,24 @@ function changeTabs(target, rootElem, jumpToSection) {
   grandparent.parentNode
     .querySelector(`#${target.getAttribute('aria-controls')}`)
     .removeAttribute('hidden');
-  if (jumpToSection) {
-    let sectionToJump;
-    let intervalCounter = 0;
-    const intervalID = setInterval(() => {
-      console.log('in set interval');
-      intervalCounter++;
-      sectionToJump = rootElem.querySelector(`[data-jump-to-tab="${target.getAttribute('id')}"]:not([data-status="decorated"])`);
-      if (sectionToJump) {
-        console.log('scroll', sectionToJump);
-        sectionToJump.scrollIntoView();
-        clearInterval(intervalID);
-      }
-      if (intervalCounter > 2) {
-        clearInterval(intervalID);
-      }
-    }, 500);
+  if (sectionToJump) {
+    const jumpToSectionDecoratedDataStatus = sectionToJump.getAttribute('data-status') === 'decorated';
+    if (jumpToSectionDecoratedDataStatus) {
+      let intervalCounter = 0;
+      const intervalID = setInterval(() => {
+        intervalCounter++;
+        sectionToJump = rootElem.querySelector(`[data-jump-to-tab="${target.getAttribute('id')}"]:not([data-status="decorated"])`);
+        if (sectionToJump) {
+          sectionToJump.scrollIntoView();
+          clearInterval(intervalID);
+        }
+        if (intervalCounter > 2) {
+          clearInterval(intervalID);
+        }
+      }, 500);
+    } else {
+      sectionToJump.scrollIntoView();
+    }
   }
 }
 
